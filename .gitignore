@@ -5,3 +5,4 @@ files.zip
 venv/
 .env
 env/
+.vscode/

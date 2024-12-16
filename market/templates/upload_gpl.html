@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload MO Profile - Audit Tool</title>
+    <title>Upload GPL File - Audit Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -11,16 +11,16 @@
     <div class="navbar">
         <div class="navbar-content">
             <h2 class="navbar-title">Audit Tool</h2>
-            <a href="{{ url_for('main_routes.home') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
         </div>
     </div>
     <div class="container">
         <div class="upload-section">
-            <h1>Upload MO Profile</h1>
-            <p class="upload-description">Upload your MO Profile file for processing</p>
+            <h1>Upload GPL File</h1>
+            <p class="upload-description">Upload your Golden Parameter List (GPL) file for processing</p>
             
             <div class="upload-card">
-                <form id="uploadForm" action="{{ url_for('file_routes.process_mo') }}" method="post" enctype="multipart/form-data">
+                <form id="uploadForm" action="{{ url_for('process_gpl') }}" method="post" enctype="multipart/form-data">
                     <div class="upload-area">
                         <div class="file-input-container">
                             <input type="file" id="file" name="file" required accept=".xlsx,.xls">

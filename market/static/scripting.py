@@ -1,6 +1,7 @@
 import pandas as pd
 from zipfile import ZipFile
-import os, time
+import os
+from market import app
 
 def valueCheck(record2,truFlag,values, parameter):
     if isinstance(record2[parameter], bool) or isinstance(values,bool):  
@@ -194,7 +195,7 @@ def NRCELLS(condition, record2):
         if conditionSplit[1].split('=')[1][0] == exportCondition:                        
             return True
     return False       
-# 8144254000000008002
+
 def EUtranCellFDD(condition,record2):
     conditionSplit = condition.split(',')
     moCondition = conditionSplit[0]
@@ -371,45 +372,16 @@ def check_mecontext_ends_with_3(df2):
     return found,letter
 
 
-def process_file(file):
-    if file:
-        # try:
-        # yield f'data: 5\n\n'
-        all_sheets = pd.read_excel(file, sheet_name=None)  
-        # yield f'data: 10\n\n'
+def goldenFile(file):
+    print(f"Starting process_file with {file}")
 
-        # all_sheets = logic_sheet
+    if file:
         
-        # flag = scripting_main(df, logic_sheet)
-        # #print(flag)
+        all_sheets = pd.read_excel(file, sheet_name=None)  
         flag = 0
         shhetFlag = 0
         truFlag = 0
-        # try:
-            # all_sheets = pd.read_excel('ExportXLS_04Apr1007.xlsx', sheet_name=None)
-
-            # df = pd.read_excel('Final Input Sheet (Scripting)_New_V150424.xlsx', sheet_name='Sheet1')
-
-        # keys_list = list(all_sheets.keys())
-
-        # # Convert dictionary keys to a list
-        # keys_list = list(all_sheets.keys())
-
-        # # Calculate the indices for 0.3, 0.5, and 0.7 of the length
-        # index_03 = int(len(keys_list) * 0.3)
-        # index_05 = int(len(keys_list) * 0.5)
-        # index_07 = int(len(keys_list) * 0.7)
-
-        # # Ensure indices are within the bounds of the list
-        # index_03 = min(max(index_03, 0), len(keys_list) - 1)
-        # index_05 = min(max(index_05, 0), len(keys_list) - 1)
-        # index_07 = min(max(index_07, 0), len(keys_list) - 1)
-
-        # # Get the keys at these indices
-        # key_03 = keys_list[index_03]
-        # key_05 = keys_list[index_05]
-        # key_07 = keys_list[index_07]
-
+        
         results = []
 
         for layer_name in 'LowBand', 'MidBand', 'N41Band':
@@ -423,12 +395,6 @@ def process_file(file):
 
                 
                 if moName in all_sheets.keys():
-                    # if int(key) <= int(index_03) and int(key) > 50:
-                    #     yield f'data: 30\n\n'
-                    # elif int(key) >= int(index_03) and int(key) <= int(index_05):
-                    #     yield f'data: 55\n\n'
-                    # elif int(key) >= int(index_05) and int(key) >= int(index_07):
-                    #     yield f'data: 75\n\n'
 
                     df2 = all_sheets[moName]
                     layer_Pair_Exist, letterID = check_mecontext_ends_with_3(df2)
@@ -533,21 +499,6 @@ def process_file(file):
                                         result, truFlag, val1, val2 = valueCheck(record2,truFlag,values, parameter)
                                         if result:
                                             flag, shhetFlag, truFlag = resultFunction(all_sheets,truFlag, moName, parameter, values, record2,results,key2,val1,val2,df2, layer_name)
-                                # elif moName == 'GUtranFreqRelation':
-                                #     if GUtranFreqRelation(condition, record2):
-                                #         result, truFlag, val1, val2 = valueCheck(record2,truFlag,values, parameter)
-                                #         if result:
-                                #             flag, shhetFlag, truFlag = resultFunction(all_sheets,truFlag, moName, parameter, values, record2,results,key2,val1,val2,df2, layer_name)
-                                # elif moName == 'NRFreqRelation':
-                                #     if NRFreqRelation(condition, record2):
-                                #         result, truFlag, val1, val2 = valueCheck(record2,truFlag,values, parameter)
-                                #         if result:
-                                #             flag, shhetFlag, truFlag = resultFunction(all_sheets,truFlag, moName, parameter, values, record2,results,key2,val1,val2,df2, layer_name)
-                                # elif moName == 'EUtranFreqRelation':
-                                #     if EUtranFreqRelation(condition, record2):
-                                #         result, truFlag, val1, val2 = valueCheck(record2,truFlag,values, parameter)
-                                #         if result:
-                                #             flag, shhetFlag, truFlag = resultFunction(all_sheets,truFlag, moName, parameter, values, record2,results,key2,val1,val2,df2, layer_name)
                                 elif moName == 'UeGroupSelectionProfile':
                                     if conditionCheck(condition, record2['MO']):
                                         result, truFlag, val1, val2 = valueCheck(record2,truFlag,values, parameter)
@@ -638,58 +589,32 @@ def process_file(file):
                         
                 else:
                     results.append({"MO Name":moName,"Parameter":None,"Row":None,"Base-Line Value":None,"Export Value":None,"Layer Name":layer_name,"Comments":f"Sheet: {moName} not found"})
-                    #print(key," sheet name not found..")
             
-        with pd.ExcelWriter('New_Sheet.xlsx', engine='openpyxl') as writer:
-            # yield f'data: 80\n\n'
+        with pd.ExcelWriter(os.path.join(app.config['UPLOAD_FOLDER'], 'New_Sheet.xlsx'), engine='openpyxl') as writer:
             for sheet_name, dfnew in all_sheets.items():
                 dfnew.to_excel(writer, sheet_name=sheet_name, index=False)
-            # yield f'data: 90\n\n'
-            # shhetFlag = 0
-        # except Exception as e:
-        #     #print(moName,parameter,values)
-        #     #print('Exception',e)
-        #     return 'Fail'
 
         if flag == 0:
-            #print('\nNo Errors Found..')
-            # return False
-            yield f'data: 147'
-            # raise Exception("An error occurred")
+            print('\nNo Errors Found..')
+            return False
         else:
             # Convert the list of dictionaries to a DataFrame
             df = pd.DataFrame(results)
 
             # Specify the Excel file name
-            excel_file_name = "output.xlsx"
+            excel_file_name = os.path.join(app.config['UPLOAD_FOLDER'], "output.xlsx")
 
             # Save the DataFrame to Excel
             df.to_excel(excel_file_name, index=False)
-            # yield f'data: 90\n\n'
-            # return True
-
-            #print(f"\nData has been successfully written to {excel_file_name}.")
         if flag == True:
-            output1 = os.path.join(os.getcwd(), 'New_Sheet.xlsx')
-            output2 = os.path.join(os.getcwd(), 'output.xlsx')
+            output1 = os.path.join(app.config['UPLOAD_FOLDER'], 'New_Sheet.xlsx')
+            output2 = os.path.join(app.config['UPLOAD_FOLDER'], 'output.xlsx')
 
-            zip_filename = 'files.zip'
+            zip_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'files.zip')
             with ZipFile(zip_filename, 'w') as zipf:
                 zipf.write(output1, os.path.basename(output1))
                 zipf.write(output2, os.path.basename(output2))
 
         return True    
-            # yield 'data: 100\n\n'
-            # time.sleep(2)
-            # yield 'data: 110\n\n'
-            # Send the zip file as an attachment
-            # return send_file(os.path.join(os.getcwd(), zip_filename), as_attachment=True)
-        # else:                
-        #     yield f'data: 147'
-                # raise Exception("An error occurred")
-            # return redirect(url_for('upload_file'))
-            
-    # except Exception as e:
-    #     #print(e)
-    #     yield f'data: 147'
-    #     # raise Exception(f"An error occurred {e}")
+    else:
+        return False

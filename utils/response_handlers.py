@@ -1,5 +1,6 @@
 from flask import jsonify, send_file
 import os
+from market import app
 
 def handle_file_upload_error(error_type):
     error_messages = {
@@ -11,6 +12,7 @@ def handle_file_upload_error(error_type):
     return jsonify({'error': error_messages.get(error_type, 'Unknown error')}), 400
 
 def handle_processed_file():
-    if os.path.exists('files.zip'):
-        return send_file('files.zip', as_attachment=True)
+    zip_path = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], 'files.zip')
+    if os.path.exists(zip_path):
+        return send_file(zip_path, as_attachment=True)
     return jsonify({'error': 'Processing failed'}), 500

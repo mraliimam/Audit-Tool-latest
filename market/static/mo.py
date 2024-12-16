@@ -1,0 +1,2 @@
+def moFile(file):
+    pass
