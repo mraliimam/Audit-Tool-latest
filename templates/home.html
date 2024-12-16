@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <h2 class="navbar-title">Audit Tool</h2>
+        </div>
+    </div>
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Welcome to Audit Tool</h1>
+            <p class="welcome-text">Select an option below to begin processing your files</p>
+        </div>
+        <div class="card-container">
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h2>GPL File Processing</h2>
+                <p>Upload and process Golden Parameter List files</p>
+                <a href="{{ url_for('main_routes.upload_gpl') }}" class="button">Upload GPL File</a>
+            </div>
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h2>MO Profile Processing</h2>
+                <p>Upload and process MO Profile files</p>
+                <a href="{{ url_for('main_routes.upload_mo') }}" class="button">Upload MO Profile</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>&copy; 2024 Audit Tool. All rights reserved.</p>
+    </footer>
+</body>
+</html>
