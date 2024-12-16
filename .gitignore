@@ -4,3 +4,4 @@ uploads/
 files.zip
 venv/
 .env
+env/

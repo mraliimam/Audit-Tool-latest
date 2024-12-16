@@ -371,7 +371,7 @@ def check_mecontext_ends_with_3(df2):
     return found,letter
 
 
-def processFile(file):
+def process_file(file):
     if file:
         # try:
         # yield f'data: 5\n\n'

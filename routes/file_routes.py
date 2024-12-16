@@ -43,7 +43,7 @@ def process_mo():
         return handle_file_upload_error('processing_failed')
     
     # Import and run the MO processing script
-    from mo import process_file
-    process_file(filepath)
+    from mo import processFile
+    processFile(filepath)
     
     return handle_processed_file()
